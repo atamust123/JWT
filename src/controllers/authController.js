@@ -1,7 +1,24 @@
 const User = require("../models/Users")
+const USER_VALIDATON_FAILED = "user validation failed"
+const MONGO_SERVER_ERROR = "MongoServerError";
+const handleErrors = (err) => {
+    if (err.name === MONGO_SERVER_ERROR && err.code === 11000) {
+        return { [err.name]: "That email is already in use" };
+    }
+
+    let errors = { password: "", email: "" };
+    console.log(err.message, err.code)
+
+    if (err.message.includes(USER_VALIDATON_FAILED)) {
+        Object.values(err.errors).forEach(({ properties }) => {
+            console.log(properties);
+            errors[properties.path] = properties.message;
+        });
+    }
+    return errors;
+}
 
 module.exports.signup_get = (req, res) => {
-
     res.render("signup");
 }
 
@@ -14,8 +31,8 @@ module.exports.signup_post = async (req, res) => {
         const user = await User.create({ email, password });
         res.status(201).json(user)
     } catch (err) {
-        // console.log(err);
-        res.status(400).send("error, user could not be created");
+        const errors = handleErrors(err);
+        res.status(400).json({ errors })
     }
 }
 
