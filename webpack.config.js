@@ -15,7 +15,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
+                test: /\.(js|jsx|ts|tsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader",
@@ -31,7 +31,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: [".js", ".jsx"], // in order to import without ./App.jsx 
+        extensions: [".js", ".jsx", "ts", "tsx"], // in order to import without ./App.jsx 
         alias: {
             //map the buffer module to a browser compatible version
             buffer: "buffer-es6",
